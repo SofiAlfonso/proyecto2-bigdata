@@ -5,9 +5,10 @@ set -e
 
 DIR="$HOME/datos"
 # El bucket cambia segun quien despliega: se lee de ~/datos/.env, que crea setup_ec2.sh.
+# En una EC2 creada a mano: echo "BUCKET_NAME=<bucket>" > ~/datos/.env
 # shellcheck source=/dev/null
-source "$DIR/.env"
-BUCKET="s3://${BUCKET_NAME:?Falta BUCKET_NAME en ~/datos/.env}/raw"
+[ -f "$DIR/.env" ] && source "$DIR/.env"
+BUCKET="s3://${BUCKET_NAME:?Falta BUCKET_NAME: crear ~/datos/.env con BUCKET_NAME=<bucket>}/raw"
 TS=$(date +%Y%m%d_%H%M%S)
 log() { echo "$(date '+%F %T') $1"; }
 

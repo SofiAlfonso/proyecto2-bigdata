@@ -25,13 +25,13 @@ SUBNET_ID=$(aws ec2 describe-subnets \
   --query 'Subnets[0].SubnetId' --output text)
 GLUE='{"hive.metastore.client.factory.class":"com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"}'
 
-# 1 maestro + 1 nodo core. Roles por defecto de EMR (existen en el Learner Lab).
-CLUSTER_ID=$(aws emr create-cluster --name emr-ideam --release-label "$RELEASE" \
+# Un solo nodo (el maestro hace todo, como en el diseno acordado) y sin registros en S3:
+# ejecutar_hive.sh sube la salida de cada consulta por su cuenta. Roles por defecto de EMR.
+CLUSTER_ID=$(aws emr create-cluster --name cluster-ideam --release-label "$RELEASE" \
   --applications Name=Hadoop Name=Hive Name=Spark \
-  --instance-type "$TIPO" --instance-count 2 \
+  --instance-type "$TIPO" --instance-count 1 \
   --use-default-roles --ec2-attributes "SubnetId=$SUBNET_ID" \
   --configurations "[{\"Classification\":\"hive-site\",\"Properties\":$GLUE},{\"Classification\":\"spark-hive-site\",\"Properties\":$GLUE}]" \
-  --log-uri "s3://$BUCKET_NAME/logs/emr/" \
   --auto-termination-policy IdleTimeout=3600 \
   --query ClusterId --output text)
 

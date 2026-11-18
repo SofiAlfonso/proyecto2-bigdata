@@ -20,7 +20,7 @@ if ! aws glue get-job --job-name raw_to_trusted >/dev/null 2>&1; then
   aws glue create-job --name raw_to_trusted --role LabRole \
     --command "Name=glueetl,ScriptLocation=s3://$BUCKET_NAME/scripts/raw_to_trusted.py,PythonVersion=3" \
     --default-arguments "$ARGS" \
-    --glue-version 5.0 --worker-type G.1X --number-of-workers 2 \
+    --glue-version 4.0 --worker-type G.1X --number-of-workers 2 \
     --query Name --output text
 fi
 
