@@ -4,7 +4,10 @@
 # /home/ec2-user/datos los scripts del repo que se ejecutan en la EC2.
 set -euo pipefail
 
-REPO=https://raw.githubusercontent.com/SofiAlfonso/proyecto2-bigdata/main
+# Repositorio y rama de donde la EC2 baja los scripts. Al fusionar la rama en main, poner RAMA=main.
+REPO_GITHUB=SofiAlfonso/proyecto2-bigdata
+RAMA=scripts
+REPO=https://raw.githubusercontent.com/$REPO_GITHUB/$RAMA
 DIR=/home/ec2-user/datos
 
 dnf install -y mariadb105 cronie
