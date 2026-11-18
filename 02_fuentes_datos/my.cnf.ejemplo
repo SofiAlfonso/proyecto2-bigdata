@@ -1,0 +1,11 @@
+# Plantilla de ~/.my.cnf para la EC2 (puntos 2 y 3).
+# mysql lee de aqui host, usuario y clave, por eso ni ingesta.sh ni el repo guardan credenciales.
+# En la EC2, como ec2-user:
+#   cp ~/datos/my.cnf.ejemplo ~/.my.cnf
+#   nano ~/.my.cnf          (poner el endpoint que imprimio infra/03_rds.sh y la clave)
+#   chmod 600 ~/.my.cnf     (solo ec2-user puede leerlo)
+[client]
+host=<endpoint-de-rds>
+user=admin
+password=<clave-maestra>
+ssl

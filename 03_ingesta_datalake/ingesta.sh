@@ -3,8 +3,12 @@
 # Se ejecuta en la EC2. Las credenciales de RDS estan en ~/.my.cnf (no en este archivo).
 set -e
 
-BUCKET="s3://proyecto2-datalake-sofi22/raw"
 DIR="$HOME/datos"
+# El bucket cambia segun quien despliega: se lee de ~/datos/.env, que crea setup_ec2.sh.
+# En una EC2 creada a mano: echo "BUCKET_NAME=<bucket>" > ~/datos/.env
+# shellcheck source=/dev/null
+[ -f "$DIR/.env" ] && source "$DIR/.env"
+BUCKET="s3://${BUCKET_NAME:?Falta BUCKET_NAME: crear ~/datos/.env con BUCKET_NAME=<bucket>}/raw"
 TS=$(date +%Y%m%d_%H%M%S)
 log() { echo "$(date '+%F %T') $1"; }
 
