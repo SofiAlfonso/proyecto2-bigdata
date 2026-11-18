@@ -1,10 +1,14 @@
 #!/bin/bash
-# Punto 3: crea el data lake, un bucket S3 con las zonas raw, trusted y refined.
-# Donde: terminal del Learner Lab (o CloudShell, o la EC2).
-# Uso:   bash 03_ingesta_datalake/crear_bucket.sh <nombre-unico-del-bucket>
+# Punto 3: crea el data lake, el bucket BUCKET_NAME de .env con las zonas raw, trusted y refined.
+# Donde: terminal del Learner Lab (o CloudShell), con .env creado en la raiz del repo.
+# Uso:   bash 03_ingesta_datalake/crear_bucket.sh
 set -euo pipefail
-export AWS_DEFAULT_REGION=us-east-1 AWS_PAGER=""
-BUCKET_NAME="${1:?Uso: crear_bucket.sh <nombre-unico-del-bucket>}"
+RAIZ="$(cd "$(dirname "$0")/.." && pwd)"
+[ -f "$RAIZ/.env" ] || { echo "Falta $RAIZ/.env: cp env.ejemplo .env y ajustarlo"; exit 1; }
+# shellcheck source=/dev/null
+source "$RAIZ/.env"
+export AWS_DEFAULT_REGION="${AWS_REGION:?Falta AWS_REGION en .env}" AWS_PAGER=""
+: "${BUCKET_NAME:?Falta BUCKET_NAME en .env}"
 
 aws s3 mb "s3://$BUCKET_NAME"
 for z in raw trusted refined; do

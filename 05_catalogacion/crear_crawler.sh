@@ -2,11 +2,14 @@
 # Punto 5, Glue: crea la base "ideam_trusted" en el catalogo de Glue y el crawler "crawler_trusted",
 # que registra una tabla por carpeta de trusted/. Luego lo ejecuta y lista las tablas.
 # Donde: terminal del Learner Lab (o CloudShell), despues de crear_job_glue.sh.
-# Uso:   bash 05_catalogacion/crear_crawler.sh <nombre-del-bucket>
+# Uso:   bash 05_catalogacion/crear_crawler.sh
 set -euo pipefail
-export AWS_DEFAULT_REGION=us-east-1 AWS_PAGER=""
-BUCKET_NAME="${1:?Uso: crear_crawler.sh <nombre-del-bucket>}"
-T="s3://$BUCKET_NAME/trusted"
+RAIZ="$(cd "$(dirname "$0")/.." && pwd)"
+[ -f "$RAIZ/.env" ] || { echo "Falta $RAIZ/.env: cp env.ejemplo .env y ajustarlo"; exit 1; }
+# shellcheck source=/dev/null
+source "$RAIZ/.env"
+export AWS_DEFAULT_REGION="${AWS_REGION:?Falta AWS_REGION en .env}" AWS_PAGER=""
+T="s3://${BUCKET_NAME:?Falta BUCKET_NAME en .env}/trusted"
 
 aws glue get-database --name ideam_trusted >/dev/null 2>&1 \
   || aws glue create-database --database-input Name=ideam_trusted

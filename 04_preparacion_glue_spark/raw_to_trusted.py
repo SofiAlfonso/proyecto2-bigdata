@@ -6,7 +6,6 @@ import sys
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window
 
-BUCKET = "s3://proyecto2-datalake-sofi22"
 
 
 # ---------- Funciones de limpieza ----------
@@ -94,7 +93,10 @@ from awsglue.job import Job
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 
-args = getResolvedOptions(sys.argv, ["JOB_NAME"])
+# El bucket cambia segun quien despliega: llega como argumento del job (--BUCKET_NAME),
+# que crear_job_glue.sh toma de .env.
+args = getResolvedOptions(sys.argv, ["JOB_NAME", "BUCKET_NAME"])
+BUCKET = f"s3://{args['BUCKET_NAME']}"
 glue = GlueContext(SparkContext.getOrCreate())
 spark = glue.spark_session
 job = Job(glue)

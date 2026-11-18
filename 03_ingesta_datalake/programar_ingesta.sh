@@ -1,16 +1,13 @@
 #!/bin/bash
-# Punto 3: apunta ingesta.sh al bucket de este despliegue, la corre una vez y la programa en cron
-# cada 10 minutos (la misma linea de la evidencia).
+# Punto 3: corre ingesta.sh una vez y la programa en cron cada 10 minutos (la misma linea de la evidencia).
+# El bucket sale de ~/datos/.env, que crea setup_ec2.sh a partir del .env del repo.
 # Donde: en la EC2, como ec2-user, cuando ya existen ~/.my.cnf y temperatura_abr_jun_2025.csv.
-# Uso:   bash ~/datos/programar_ingesta.sh <nombre-del-bucket>
+# Uso:   bash ~/datos/programar_ingesta.sh
 set -euo pipefail
-BUCKET_NAME="${1:?Uso: programar_ingesta.sh <nombre-del-bucket>}"
 DIR=/home/ec2-user/datos
-
-# ingesta.sh trae fijo el bucket original; se cambia solo la copia de la EC2, no el repo
-sed -i "s#s3://[^/\"]*/raw#s3://$BUCKET_NAME/raw#" "$DIR/ingesta.sh"
-chmod +x "$DIR/ingesta.sh"
-grep -n '^BUCKET=' "$DIR/ingesta.sh"
+# shellcheck source=/dev/null
+source "$DIR/.env"
+echo "Bucket: ${BUCKET_NAME:?Falta BUCKET_NAME en $DIR/.env}"
 
 # Corrida manual de prueba
 "$DIR/ingesta.sh"

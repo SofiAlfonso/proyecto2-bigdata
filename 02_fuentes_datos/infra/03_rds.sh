@@ -4,7 +4,11 @@
 # Uso:   bash 02_fuentes_datos/infra/03_rds.sh
 # Pide la clave maestra (8 a 41 caracteres, sin / " @ ni espacios); no se guarda en ningun archivo.
 set -euo pipefail
-export AWS_DEFAULT_REGION=us-east-1 AWS_PAGER=""
+RAIZ="$(cd "$(dirname "$0")/../.." && pwd)"
+[ -f "$RAIZ/.env" ] || { echo "Falta $RAIZ/.env: cp env.ejemplo .env y ajustarlo"; exit 1; }
+# shellcheck source=/dev/null
+source "$RAIZ/.env"
+export AWS_DEFAULT_REGION="${AWS_REGION:?Falta AWS_REGION en .env}" AWS_PAGER=""
 
 read -rsp "Clave maestra de RDS: " DB_PASSWORD; echo
 

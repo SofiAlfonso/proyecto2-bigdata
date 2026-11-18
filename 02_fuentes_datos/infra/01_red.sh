@@ -1,9 +1,13 @@
 #!/bin/bash
 # Punto 2, red: grupos de seguridad de la EC2 fuente y de RDS, en la VPC por defecto.
-# Donde: terminal del Learner Lab (o CloudShell), desde la raiz del repo.
+# Donde: terminal del Learner Lab (o CloudShell), con .env creado en la raiz del repo.
 # Uso:   bash 02_fuentes_datos/infra/01_red.sh
 set -euo pipefail
-export AWS_DEFAULT_REGION=us-east-1 AWS_PAGER=""
+RAIZ="$(cd "$(dirname "$0")/../.." && pwd)"
+[ -f "$RAIZ/.env" ] || { echo "Falta $RAIZ/.env: cp env.ejemplo .env y ajustarlo"; exit 1; }
+# shellcheck source=/dev/null
+source "$RAIZ/.env"
+export AWS_DEFAULT_REGION="${AWS_REGION:?Falta AWS_REGION en .env}" AWS_PAGER=""
 
 VPC_ID=$(aws ec2 describe-vpcs --filters Name=is-default,Values=true \
   --query 'Vpcs[0].VpcId' --output text)

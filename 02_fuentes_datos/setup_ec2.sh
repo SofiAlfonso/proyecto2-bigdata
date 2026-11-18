@@ -1,13 +1,13 @@
 #!/bin/bash
 # User data de la EC2 "fuente-archivos" (puntos 2 y 3). AWS lo ejecuta como root, solo en el primer arranque.
-# Instala el cliente MariaDB y cron (Amazon Linux 2023 no trae cron) y deja en
-# /home/ec2-user/datos los scripts del repo que se ejecutan en la EC2.
+# infra/02_ec2.sh le antepone REPO_GITHUB, RAMA y BUCKET_NAME tomados de .env.
+# (Si se pega a mano en la consola de EC2, agregar esas 3 lineas despues de la primera.)
+# Instala el cliente MariaDB y cron (Amazon Linux 2023 no trae cron), deja en
+# /home/ec2-user/datos los scripts del repo y un .env con el bucket para ingesta.sh.
 set -euo pipefail
+: "${REPO_GITHUB:?}" "${RAMA:?}" "${BUCKET_NAME:?}"
 
-# Repositorio y rama de donde la EC2 baja los scripts. Al fusionar la rama en main, poner RAMA=main.
-REPO_GITHUB=SofiAlfonso/proyecto2-bigdata
-RAMA=scripts
-REPO=https://raw.githubusercontent.com/$REPO_GITHUB/$RAMA
+REPO="https://raw.githubusercontent.com/$REPO_GITHUB/$RAMA"
 DIR=/home/ec2-user/datos
 
 dnf install -y mariadb105 cronie
@@ -22,5 +22,6 @@ for f in 02_fuentes_datos/descargar_temperatura.sh \
          03_ingesta_datalake/programar_ingesta.sh; do
   curl -fsSL -o "$DIR/$(basename "$f")" "$REPO/$f"
 done
+echo "BUCKET_NAME=$BUCKET_NAME" > "$DIR/.env"
 chmod +x "$DIR"/*.sh
 chown -R ec2-user:ec2-user "$DIR"

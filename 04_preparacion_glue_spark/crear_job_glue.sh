@@ -1,25 +1,31 @@
 #!/bin/bash
 # Punto 4: sube raw_to_trusted.py, crea el job de Glue "raw_to_trusted" y lo ejecuta hasta que termine.
-# Donde: terminal del Learner Lab (o CloudShell), desde la raiz del repo, con raw/ ya poblado.
-# Uso:   bash 04_preparacion_glue_spark/crear_job_glue.sh <nombre-del-bucket>
+# El bucket (BUCKET_NAME de .env) se le pasa al job como argumento --BUCKET_NAME.
+# Donde: terminal del Learner Lab (o CloudShell), con raw/ ya poblado.
+# Uso:   bash 04_preparacion_glue_spark/crear_job_glue.sh
 set -euo pipefail
-export AWS_DEFAULT_REGION=us-east-1 AWS_PAGER=""
-BUCKET_NAME="${1:?Uso: crear_job_glue.sh <nombre-del-bucket>}"
-cd "$(dirname "$0")"
+RAIZ="$(cd "$(dirname "$0")/.." && pwd)"
+[ -f "$RAIZ/.env" ] || { echo "Falta $RAIZ/.env: cp env.ejemplo .env y ajustarlo"; exit 1; }
+# shellcheck source=/dev/null
+source "$RAIZ/.env"
+export AWS_DEFAULT_REGION="${AWS_REGION:?Falta AWS_REGION en .env}" AWS_PAGER=""
+: "${BUCKET_NAME:?Falta BUCKET_NAME en .env}"
+ARGS="{\"--BUCKET_NAME\":\"$BUCKET_NAME\"}"
 
-# El script trae fijo el bucket original; se sube una copia con el bucket de este despliegue
-sed "s#^BUCKET = .*#BUCKET = \"s3://$BUCKET_NAME\"#" raw_to_trusted.py > /tmp/raw_to_trusted.py
-aws s3 cp /tmp/raw_to_trusted.py "s3://$BUCKET_NAME/scripts/raw_to_trusted.py" --only-show-errors
+aws s3 cp "$RAIZ/04_preparacion_glue_spark/raw_to_trusted.py" \
+  "s3://$BUCKET_NAME/scripts/raw_to_trusted.py" --only-show-errors
 
 # Igual que la evidencia: workers G.1X, 2 DPU. LabRole es el unico rol que permite el Learner Lab.
 if ! aws glue get-job --job-name raw_to_trusted >/dev/null 2>&1; then
   aws glue create-job --name raw_to_trusted --role LabRole \
     --command "Name=glueetl,ScriptLocation=s3://$BUCKET_NAME/scripts/raw_to_trusted.py,PythonVersion=3" \
+    --default-arguments "$ARGS" \
     --glue-version 5.0 --worker-type G.1X --number-of-workers 2 \
     --query Name --output text
 fi
 
-RUN_ID=$(aws glue start-job-run --job-name raw_to_trusted --query JobRunId --output text)
+RUN_ID=$(aws glue start-job-run --job-name raw_to_trusted --arguments "$ARGS" \
+  --query JobRunId --output text)
 echo "Corrida $RUN_ID"
 while true; do
   ESTADO=$(aws glue get-job-run --job-name raw_to_trusted --run-id "$RUN_ID" \
