@@ -6,3 +6,5 @@ __pycache__/
 credentials*
 *.csv
 PLAN_MAESTRO.md
+.DS_Store
+.gitignore
