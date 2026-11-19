@@ -123,4 +123,4 @@ Los pasos 2 a 8 leen `BUCKET_NAME`, `AWS_REGION` y demás valores de `.env`; nin
 
 - Ana Sofia Alfonso Moncada
 - Esteban Alvarez Zuluaga
-- <<Nombre del integrante 3, si aplica>>
+
