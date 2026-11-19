@@ -54,4 +54,3 @@ Si se crea el clúster desde la consola y no se pega este JSON en *Configuració
 | ![Describe](evidencias/05_hive_describe.png) | `DESCRIBE temperatura` en Hive |
 | ![Count](evidencias/06_hive_count.png) | `SELECT COUNT(*)` en Hive: 1.453.114 filas |
 
-> Pendiente de capturar para completar este punto: la consola de EMR con la configuración del clúster (versión, aplicaciones y un nodo).
