@@ -70,4 +70,4 @@ Bajo cada gráfica muestra la tabla de datos. Los resultados se guardan 5 minuto
 | ![Q6](evidencias/08_app_q6.png) | App: Q6, categorías y tecnologías |
 | ![Q7](evidencias/09_app_q7.png) | App: Q7, estaciones con menos mediciones |
 
-> Pendiente de capturar para completar este punto: la salida de `crear_api.sh` (URL de la API y las dos pruebas con `curl`) y la consola de API Gateway o de Lambda.
+
