@@ -52,4 +52,3 @@ La temperatura pasa de 251 MB en CSV a unos 7 MiB en Parquet (compresión por co
 | ![Parquet](evidencias/02_trusted_parquet.png) | Archivos Parquet en `trusted/` |
 | ![Conteos](evidencias/03_conteos_cloudwatch.png) | Conteos antes y después de limpiar, en CloudWatch |
 
-> Pendiente de capturar para completar este punto: la pestaña *Script* o *Job details* del job en la consola de Glue.
